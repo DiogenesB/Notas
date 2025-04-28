@@ -327,10 +327,23 @@
         }
         
         function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR').slice(0, 5);
-        }
+    if (!dateString) return 'N/A';
+
+    // Tenta detectar formato brasileiro e converter
+    if (dateString.includes('/') && dateString.includes(':')) {
+        const [datePart, timePart] = dateString.split(' ');
+        const [day, month, year] = datePart.split('/');
+        const formattedDateString = `${year}-${month}-${day}T${timePart}`;
+        const date = new Date(formattedDateString);
+        if (isNaN(date)) return 'N/A'; // caso ainda dê erro
+        return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR').slice(0, 5);
+    }
+
+    // Se já for um formato válido
+    const date = new Date(dateString);
+    if (isNaN(date)) return 'N/A';
+    return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR').slice(0, 5);
+}
         
         function updateTimestamp() {
             const now = new Date();
