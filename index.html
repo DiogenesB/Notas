@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Notas Fiscais | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.15);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .stats-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            color: var(--primary);
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        .badge-filter {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .badge-filter:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-file-invoice-dollar me-2"></i>
+                Gestão de Notas Fiscais
+            </a>
+            <div class="d-flex align-items-center">
+                <span id="lastUpdate" class="text-white me-3"></span>
+                <button class="btn btn-light btn-sm" id="refreshButton">
+                    <i class="fas fa-sync-alt me-1"></i>Atualizar
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="stats-card">
+                        <i class="fas fa-file-alt fa-3x mb-3" style="color: var(--primary);"></i>
+                        <div class="stats-value" id="totalNotas">0</div>
+                        <div class="text-muted">Total de Notas</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="stats-card">
+                        <i class="fas fa-check-circle fa-3x mb-3" style="color: #28a745;"></i>
+                        <div class="stats-value text-success" id="lancadasNotas">0</div>
+                        <div class="text-muted">Notas Lançadas</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="stats-card">
+                        <i class="fas fa-exclamation-circle fa-3x mb-3" style="color: #dc3545;"></i>
+                        <div class="stats-value text-danger" id="pendentesNotas">0</div>
+                        <div class="text-muted">Notas Pendentes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="filialFilter" class="form-label">Filial</label>
+                        <select id="filialFilter" class="form-select">
+                            <option value="">Todas as Filiais</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="statusFilter" class="form-label">Status</label>
+                        <select id="statusFilter" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="Lançada">Lançada</option>
+                            <option value="Não Lançada">Não Lançada</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="notaFilter" class="form-label">Número da Nota</label>
+                        <input type="text" id="notaFilter" class="form-control" placeholder="Digite o número">
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-primary badge-filter" data-filter="today">Hoje</span>
+                    <span class="badge bg-info badge-filter" data-filter="week">Esta Semana</span>
+                    <span class="badge bg-secondary badge-filter" data-filter="month">Este Mês</span>
+                    <span class="badge bg-danger badge-filter" data-filter="clear">Limpar Filtros</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="loading">
+            <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <h5 class="mt-3">Carregando dados...</h5>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i>Registro de Notas</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="notasTable" class="table table-hover" style="width:100%">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Filial</th>
+                                <th>Número</th>
+                                <th>Solicitação</th>
+                                <th>Lançamento</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        // Configurações
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwhqC-dFAjgoh7JVbcNrZU9YIDHLLRwtN1ED0pa-167HarJMfv1iUPl5FM8vWDCfCq0/exec";
+        let autoRefreshInterval;
+        
+        $(document).ready(function() {
+            // Carrega os dados inicialmente
+            loadData();
+            
+            // Configura atualização automática a cada 1 minuto 
+            startAutoRefresh();
+            
+            // Botão de atualização manual
+            $('#refreshButton').click(function() {
+                $(this).find('i').addClass('fa-spin');
+                loadData();
+                setTimeout(() => {
+                    $(this).find('i').removeClass('fa-spin');
+                }, 1000);
+            });
+            
+            // Filtros
+            $('#filialFilter, #statusFilter').change(applyFilters);
+            $('#notaFilter').keyup(applyFilters);
+            
+            // Filtros rápidos
+            $('.badge-filter').click(function() {
+                const filter = $(this).data('filter');
+                handleQuickFilter(filter);
+            });
+        });
+        
+        function loadData() {
+            $('#loading').show();
+            
+            fetch(WEB_APP_URL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateUI(data.dados);
+                        updateTimestamp();
+                    }
+                })
+                .catch(error => {
+                    console.error("Erro:", error);
+                    alert("Erro ao carregar dados");
+                })
+                .finally(() => {
+                    $('#loading').hide();
+                });
+        }
+        
+        function updateUI(dados) {
+            updateStats(dados);
+            updateTable(dados);
+            updateFilters(dados);
+        }
+        
+        function updateStats(dados) {
+            const total = dados.length;
+            const lancadas = dados.filter(n => n.status.trim() === "Lançada").length;
+
+            
+            $('#totalNotas').text(total);
+            $('#lancadasNotas').text(lancadas);
+            $('#pendentesNotas').text(total - lancadas);
+        }
+        
+        function updateTable(dados) {
+            const tableBody = $('#notasTable tbody');
+            tableBody.empty();
+            
+            dados.forEach(nota => {
+                const statusClass = nota.status.includes("Lançada") ? 
+                    "bg-success" : "bg-danger";
+                
+                tableBody.append(`
+                    <tr>
+                        <td>${nota.filial || 'N/A'}</td>
+                        <td>${nota.numeroNota || 'N/A'}</td>
+                        <td>${formatDate(nota.dataSolicitacao)}</td>
+                        <td>${formatDate(nota.dataLancamento)}</td>
+                        <td><span class="badge ${statusClass} status-badge">${nota.status || 'N/A'}</span></td>
+                    </tr>
+                `);
+            });
+            
+            if (!$.fn.DataTable.isDataTable('#notasTable')) {
+                $('#notasTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+                    }
+                });
+            }
+        }
+        
+        function updateFilters(dados) {
+            const filiais = [...new Set(dados.map(n => n.filial))].filter(Boolean).sort();
+            const filialSelect = $('#filialFilter');
+            
+            filialSelect.empty();
+            filialSelect.append('<option value="">Todas as Filiais</option>');
+            filiais.forEach(filial => {
+                filialSelect.append(`<option value="${filial}">${filial}</option>`);
+            });
+        }
+        
+        function applyFilters() {
+            const table = $('#notasTable').DataTable();
+            table.column(0).search($('#filialFilter').val());
+            table.column(4).search($('#statusFilter').val());
+            table.column(1).search($('#notaFilter').val());
+            table.draw();
+        }
+        
+        function handleQuickFilter(filter) {
+            if (filter === 'clear') {
+                $('#filialFilter, #statusFilter').val('');
+                $('#notaFilter').val('');
+                applyFilters();
+                return;
+            }
+            
+            // Implemente outros filtros conforme necessário
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR').slice(0, 5);
+        }
+        
+        function updateTimestamp() {
+            const now = new Date();
+            $('#lastUpdate').html(`
+                <i class="fas fa-clock"></i> 
+                ${now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+            `);
+        }
+        
+        function startAutoRefresh() {
+            // Atualiza a cada 1 minuto (60000 ms)
+            autoRefreshInterval = setInterval(loadData, 600000);
+        }
+        
+        // Para parar a atualização automática (se necessário)
+        // function stopAutoRefresh() {
+        //     clearInterval(autoRefreshInterval);
+        // }
+    </script>
+</body>
+</html>
