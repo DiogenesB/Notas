@@ -79,6 +79,14 @@
             opacity: 0.9;
             transform: translateY(-2px);
         }
+        
+        /* Estilo para a coluna de Observação */
+        #notasTable td:nth-child(6) {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
@@ -187,6 +195,7 @@
                                 <th>Solicitação</th>
                                 <th>Lançamento</th>
                                 <th>Status</th>
+                                <th>Observação</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -209,7 +218,7 @@
             // Carrega os dados inicialmente
             loadData();
             
-            // Configura atualização automática a cada 1 minuto 
+            // Configura atualização automática a cada 10 minutos
             startAutoRefresh();
             
             // Botão de atualização manual
@@ -260,8 +269,7 @@
         
         function updateStats(dados) {
             const total = dados.length;
-            const lancadas = dados.filter(n => n.status.trim() === "Lançada").length;
-
+            const lancadas = dados.filter(n => n.status && n.status.trim() === "Lançada").length;
             
             $('#totalNotas').text(total);
             $('#lancadasNotas').text(lancadas);
@@ -273,7 +281,7 @@
             tableBody.empty();
             
             dados.forEach(nota => {
-                const statusClass = nota.status.includes("Lançada") ? 
+                const statusClass = nota.status && nota.status.includes("Lançada") ? 
                     "bg-success" : "bg-danger";
                 
                 tableBody.append(`
@@ -283,6 +291,7 @@
                         <td>${formatDate(nota.dataSolicitacao)}</td>
                         <td>${formatDate(nota.dataLancamento)}</td>
                         <td><span class="badge ${statusClass} status-badge">${nota.status || 'N/A'}</span></td>
+                        <td>${nota.observacao || 'N/A'}</td>
                     </tr>
                 `);
             });
@@ -291,7 +300,10 @@
                 $('#notasTable').DataTable({
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
-                    }
+                    },
+                    columnDefs: [
+                        { width: "15%", targets: 5 } // Ajuste para a coluna de Observação
+                    ]
                 });
             }
         }
@@ -327,23 +339,23 @@
         }
         
         function formatDate(dateString) {
-    if (!dateString) return 'N/A';
+            if (!dateString) return 'N/A';
 
-    // Tenta detectar formato brasileiro e converter
-    if (dateString.includes('/') && dateString.includes(':')) {
-        const [datePart, timePart] = dateString.split(' ');
-        const [day, month, year] = datePart.split('/');
-        const formattedDateString = `${year}-${month}-${day}T${timePart}`;
-        const date = new Date(formattedDateString);
-        if (isNaN(date)) return 'N/A'; // caso ainda dê erro
-        return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR').slice(0, 5);
-    }
+            // Tenta detectar formato brasileiro e converter
+            if (dateString.includes('/') && dateString.includes(':')) {
+                const [datePart, timePart] = dateString.split(' ');
+                const [day, month, year] = datePart.split('/');
+                const formattedDateString = `${year}-${month}-${day}T${timePart}`;
+                const date = new Date(formattedDateString);
+                if (isNaN(date)) return 'N/A';
+                return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR').slice(0, 5);
+            }
 
-    // Se já for um formato válido
-    const date = new Date(dateString);
-    if (isNaN(date)) return 'N/A';
-    return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR').slice(0, 5);
-}
+            // Se já for um formato válido
+            const date = new Date(dateString);
+            if (isNaN(date)) return 'N/A';
+            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR').slice(0, 5);
+        }
         
         function updateTimestamp() {
             const now = new Date();
@@ -354,14 +366,9 @@
         }
         
         function startAutoRefresh() {
-            // Atualiza a cada 1 minuto (60000 ms)
+            // Atualiza a cada 10 minutos (600000 ms)
             autoRefreshInterval = setInterval(loadData, 600000);
         }
-        
-        // Para parar a atualização automática (se necessário)
-        // function stopAutoRefresh() {
-        //     clearInterval(autoRefreshInterval);
-        // }
     </script>
 </body>
 </html>
