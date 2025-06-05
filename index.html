@@ -4,31 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Notas Fiscais | Dashboard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="download.png" type="image/x-icon">
+    
+    <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --light: #f8f9fa;
-            --dark: #212529;
+            /* Nova paleta de cores - vermelhos e branco */
+            --primary: #8B0000;       /* Vermelho escuro */
+            --primary-light: #FF6B6B; /* Vermelho claro */
+            --secondary: #FF0000;     /* Vermelho padrão */
+            --light: #FFFFFF;         /* Branco */
+            --dark: #212529;         /* Preto para textos */
+            --success: #28a745;       /* Verde para status positivo */
+            --danger: #dc3545;        /* Vermelho para status negativo */
+            --info: #17a2b8;          /* Azul para informações */
+            --warning: #ffc107;       /* Amarelo para alertas */
         }
         
         body {
-            background-color: #f5f7fa;
+            background-color: #f8f9fa;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--dark);
+        }
+        
+        /* Navbar estilizada com a nova paleta */
+        .navbar {
+            background-color: var(--primary) !important;
+            box-shadow: 0 2px 10px rgba(139, 0, 0, 0.2);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+        
+        .navbar-brand img {
+            height: 30px;
+            margin-right: 10px;
         }
         
         .dashboard-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+            color: var(--light);
             border-radius: 12px;
             padding: 2rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.15);
+            box-shadow: 0 4px 20px rgba(139, 0, 0, 0.15);
         }
         
         .card {
@@ -38,11 +66,18 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             margin-bottom: 1.5rem;
             overflow: hidden;
+            border-top: 3px solid var(--primary-light);
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--light);
+            border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+            font-weight: 600;
         }
         
         .stats-card {
@@ -64,12 +99,6 @@
             font-weight: 600;
         }
         
-        #loading {
-            display: none;
-            text-align: center;
-            padding: 3rem 0;
-        }
-        
         .badge-filter {
             cursor: pointer;
             transition: all 0.2s;
@@ -87,14 +116,68 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        
+        /* Loading spinner */
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        /* Botões personalizados */
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        /* Badges com a nova paleta */
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+        
+        .bg-secondary {
+            background-color: var(--primary-light) !important;
+        }
+        
+        /* Customização da tabela */
+        .table-hover tbody tr:hover {
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+        
+        /* Responsividade melhorada */
+        @media (max-width: 768px) {
+            .stats-value {
+                font-size: 1.75rem;
+            }
+            
+            .card-header h5 {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="fas fa-file-invoice-dollar me-2"></i>
-                Gestão de Notas Fiscais
+                <!-- Logo pode ser adicionado aqui -->
+                <img src="download.png" alt="Logo" class="img-fluid">
+                <span class="d-none d-md-inline">Gestão de Notas Fiscais</span>
             </a>
             <div class="d-flex align-items-center">
                 <span id="lastUpdate" class="text-white me-3"></span>
@@ -119,7 +202,7 @@
             <div class="col-md-4">
                 <div class="card h-100">
                     <div class="stats-card">
-                        <i class="fas fa-check-circle fa-3x mb-3" style="color: #28a745;"></i>
+                        <i class="fas fa-check-circle fa-3x mb-3" style="color: var(--success);"></i>
                         <div class="stats-value text-success" id="lancadasNotas">0</div>
                         <div class="text-muted">Notas Lançadas</div>
                     </div>
@@ -128,7 +211,7 @@
             <div class="col-md-4">
                 <div class="card h-100">
                     <div class="stats-card">
-                        <i class="fas fa-exclamation-circle fa-3x mb-3" style="color: #dc3545;"></i>
+                        <i class="fas fa-exclamation-circle fa-3x mb-3" style="color: var(--danger);"></i>
                         <div class="stats-value text-danger" id="pendentesNotas">0</div>
                         <div class="text-muted">Notas Pendentes</div>
                     </div>
@@ -162,9 +245,6 @@
                     </div>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-primary badge-filter" data-filter="today">Hoje</span>
-                    <span class="badge bg-info badge-filter" data-filter="week">Esta Semana</span>
-                    <span class="badge bg-secondary badge-filter" data-filter="month">Este Mês</span>
                     <span class="badge bg-danger badge-filter" data-filter="clear">Limpar Filtros</span>
                 </div>
             </div>
@@ -182,8 +262,11 @@
         </div>
         
         <div class="card mt-4">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="fas fa-table me-2"></i>Registro de Notas</h5>
+                <button class="btn btn-sm btn-outline-primary" id="exportButton">
+                    <i class="fas fa-download me-1"></i>Exportar
+                </button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -205,16 +288,40 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-file-invoice-dollar me-2"></i>Gestão de Notas Fiscais</h5>
+                    <p class="mb-0">Sistema de controle e monitoramento de notas fiscais</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        &copy; <span id="currentYear"></span> Todos os direitos reservados
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <script>
         // Configurações
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwhqC-dFAjgoh7JVbcNrZU9YIDHLLRwtN1ED0pa-167HarJMfv1iUPl5FM8vWDCfCq0/exec";
         let autoRefreshInterval;
+        let notasData = [];
         
         $(document).ready(function() {
+            // Atualiza o ano no footer
+            $('#currentYear').text(new Date().getFullYear());
+            
             // Carrega os dados inicialmente
             loadData();
             
@@ -229,6 +336,9 @@
                     $(this).find('i').removeClass('fa-spin');
                 }, 1000);
             });
+            
+            // Botão de exportação
+            $('#exportButton').click(exportToExcel);
             
             // Filtros
             $('#filialFilter, #statusFilter').change(applyFilters);
@@ -248,13 +358,14 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        updateUI(data.dados);
+                        notasData = data.dados;
+                        updateUI(notasData);
                         updateTimestamp();
                     }
                 })
                 .catch(error => {
                     console.error("Erro:", error);
-                    alert("Erro ao carregar dados");
+                    showAlert("Erro ao carregar dados. Por favor, tente novamente.", "danger");
                 })
                 .finally(() => {
                     $('#loading').hide();
@@ -291,7 +402,7 @@
                         <td>${formatDate(nota.dataSolicitacao)}</td>
                         <td>${formatDate(nota.dataLancamento)}</td>
                         <td><span class="badge ${statusClass} status-badge">${nota.status || 'N/A'}</span></td>
-                        <td>${nota.observacao || 'N/A'}</td>
+                        <td title="${nota.observacao || ''}">${nota.observacao || 'N/A'}</td>
                     </tr>
                 `);
             });
@@ -305,6 +416,8 @@
                         { width: "15%", targets: 5 } // Ajuste para a coluna de Observação
                     ]
                 });
+            } else {
+                $('#notasTable').DataTable().draw();
             }
         }
         
@@ -368,6 +481,46 @@
         function startAutoRefresh() {
             // Atualiza a cada 10 minutos (600000 ms)
             autoRefreshInterval = setInterval(loadData, 600000);
+        }
+        
+        function exportToExcel() {
+            const table = $('#notasTable').DataTable();
+            const data = table.rows({ search: 'applied' }).data().toArray();
+            
+            const wsData = [
+                ["Filial", "Número", "Solicitação", "Lançamento", "Status", "Observação"],
+                ...data.map(row => [
+                    row[0], // Filial
+                    row[1], // Número
+                    row[2], // Solicitação
+                    row[3], // Lançamento
+                    row[4], // Status
+                    row[5]  // Observação
+                ])
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "NotasFiscais");
+            
+            const date = new Date();
+            const dateStr = date.toISOString().slice(0, 10);
+            XLSX.writeFile(wb, `Notas_Fiscais_${dateStr}.xlsx`);
+        }
+        
+        function showAlert(message, type) {
+            const alert = $(`
+                <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" role="alert" style="z-index: 9999;">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `);
+            
+            $('body').append(alert);
+            
+            setTimeout(() => {
+                alert.alert('close');
+            }, 5000);
         }
     </script>
 </body>
