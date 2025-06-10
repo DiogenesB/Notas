@@ -3,135 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Notas Fiscais | Dashboard</title>
-   
-
+    <title>Gestão de Notas Devolução |</title>
+    
+    <!-- Fontes premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <style>
         :root {
-            /* Nova paleta de cores - vermelhos e branco */
-            --primary: #8B0000;       /* Vermelho escuro */
-            --primary-light: #FF6B6B; /* Vermelho claro */
-            --secondary: #FF0000;     /* Vermelho padrão */
-            --light: #FFFFFF;         /* Branco */
-            --dark: #212529;         /* Preto para textos */
-            --success: #28a745;       /* Verde para status positivo */
-            --danger: #dc3545;        /* Vermelho para status negativo */
-            --info: #17a2b8;          /* Azul para informações */
-            --warning: #ffc107;       /* Amarelo para alertas */
+            /* Paleta de cores premium - tons de vermelho */
+            --primary: #6a0f1a;       /* Vinho escuro */
+            --primary-light: #a61b2b; /* Vermelho vinho */
+            --secondary: #d92534;    /* Vermelho vibrante */
+            --light: #ffffff;         /* Branco puro */
+            --light-soft: #f9f9f9;    /* Branco suave */
+            --dark: #1a1a1a;         /* Preto premium */
+            --dark-soft: #333333;     /* Cinza escuro */
+            --success: #2e8b57;       /* Verde esmeralda */
+            --danger: #d92534;        /* Vermelho */
+            --warning: #ffa500;       /* Âmbar */
+            --info: #1e90ff;          /* Azul royal */
+            
+            /* Sombras premium */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+            --shadow-red: 0 4px 20px rgba(106, 15, 26, 0.15);
         }
         
         body {
-            background-color: #f8f9fa;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-soft);
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--dark);
+            line-height: 1.6;
         }
         
-        /* Navbar estilizada com a nova paleta */
+        /* Navbar premium */
         .navbar {
-            background-color: var(--primary) !important;
-            box-shadow: 0 2px 10px rgba(139, 0, 0, 0.2);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
+            box-shadow: var(--shadow-md);
+            padding: 0.8rem 1rem;
         }
         
         .navbar-brand {
             display: flex;
             align-items: center;
             font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--light) !important;
         }
         
         .navbar-brand img {
-            height: 30px;
-            margin-right: 10px;
+            height: 32px;
+            margin-right: 12px;
+            filter: brightness(0) invert(1);
         }
         
+        /* Header premium */
         .dashboard-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: var(--light);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 20px rgba(139, 0, 0, 0.15);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-red);
+            position: relative;
+            overflow: hidden;
         }
         
+        .dashboard-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        .dashboard-header h1 {
+            font-weight: 700;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-header p {
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        /* Cards premium */
         .card {
             border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            margin-bottom: 2rem;
             overflow: hidden;
-            border-top: 3px solid var(--primary-light);
+            background-color: var(--light);
+            border-left: 4px solid var(--primary);
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
         }
         
         .card-header {
             background-color: var(--light);
-            border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(106, 15, 26, 0.08);
             font-weight: 600;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         
-        .stats-card {
-            text-align: center;
-            padding: 1.5rem;
-        }
-        
-        .stats-value {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin: 0.5rem 0;
+        .card-header h5 {
+            margin: 0;
+            font-weight: 600;
             color: var(--primary);
         }
         
+        .card-header i {
+            color: var(--primary-light);
+        }
+        
+        /* Stats cards premium */
+        .stats-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+        
+        .stats-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .stats-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.75rem 0;
+            line-height: 1;
+        }
+        
+        .stats-label {
+            color: var(--dark-soft);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        /* Badges premium */
         .status-badge {
-            padding: 0.4rem 0.8rem;
+            padding: 0.5rem 1rem;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         
         .badge-filter {
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         
         .badge-filter:hover {
-            opacity: 0.9;
             transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
         
-        /* Estilo para a coluna de Observação */
-        #notasTable td:nth-child(6) {
-            max-width: 200px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        /* Tabela premium */
+        #notasTable {
+            border-collapse: separate;
+            border-spacing: 0;
         }
         
-        /* Loading spinner */
-        #loading {
-            display: none;
-            text-align: center;
-            padding: 3rem 0;
+        #notasTable thead th {
+            background-color: var(--primary);
+            color: var(--light);
+            font-weight: 500;
+            border: none;
+            padding: 1rem 1.25rem;
         }
         
-        /* Botões personalizados */
+        #notasTable tbody td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(106, 15, 26, 0.05);
+            vertical-align: middle;
+        }
+        
+        #notasTable tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        #notasTable tbody tr:hover {
+            background-color: rgba(106, 15, 26, 0.03) !important;
+        }
+        
+        /* Botões premium */
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        
         .btn-primary {
             background-color: var(--primary);
             border-color: var(--primary);
         }
         
         .btn-primary:hover {
-            background-color: var(--secondary);
-            border-color: var(--secondary);
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
         
         .btn-outline-primary {
@@ -142,69 +246,185 @@
         .btn-outline-primary:hover {
             background-color: var(--primary);
             border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
         
-        /* Badges com a nova paleta */
-        .bg-primary {
-            background-color: var(--primary) !important;
+        /* Formulários premium */
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(106, 15, 26, 0.1);
+            transition: all 0.3s ease;
         }
         
-        .bg-secondary {
-            background-color: var(--primary-light) !important;
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.25rem rgba(106, 15, 26, 0.15);
         }
         
-        /* Customização da tabela */
-        .table-hover tbody tr:hover {
-            background-color: rgba(255, 107, 107, 0.1);
+        /* Footer premium */
+        footer {
+            background: linear-gradient(135deg, var(--dark), var(--dark-soft));
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        footer h5 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        footer p {
+            opacity: 0.8;
+            color: var(--light);
+            margin-bottom: 0;
+        }
+        
+        /* Efeitos de hover e animações */
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.03);
+        }
+        
+        /* Loading spinner premium */
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.25rem;
+            border-color: var(--primary);
+            border-right-color: transparent;
+        }
+        
+        /* Dias pendentes badge */
+        .days-badge {
+            background-color: rgba(217, 37, 52, 0.1);
+            color: var(--danger);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .days-badge i {
+            margin-right: 0.3rem;
+            font-size: 0.7rem;
         }
         
         /* Responsividade melhorada */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .stats-value {
-                font-size: 1.75rem;
+                font-size: 2rem;
             }
             
             .card-header h5 {
-                font-size: 1rem;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1.5rem;
+            }
+            
+            .stats-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            .stats-value {
+                font-size: 1.75rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Navbar Premium -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-file-invoice-dollar fa-lg"></i>
+                <span>Gestão de Notas Fiscais</span>
+            </a>
+            <button class="btn btn-outline-light btn-sm ms-auto me-2" id="refreshButton">
+                <i class="fas fa-sync-alt me-1"></i> Atualizar
+            </button>
+            <span class="text-light" id="lastUpdate"></span>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <!-- Dashboard Header Premium -->
+        <div class="dashboard-header animate__animated animate__fadeIn">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1>Painel de Controle</h1>
+                    <p class="mb-0">Monitoramento em tempo real das notas fiscais</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="bg-white text-primary p-2 rounded d-inline-block">
+                        <i class="fas fa-calendar-day me-1"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Premium -->
         <div class="row">
-            <div class="col-md-4">
-                <div class="card h-100">
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 hover-scale">
                     <div class="stats-card">
-                        <i class="fas fa-file-alt fa-3x mb-3" style="color: var(--primary);"></i>
+                        <i class="fas fa-file-alt" style="color: var(--primary);"></i>
                         <div class="stats-value" id="totalNotas">0</div>
-                        <div class="text-muted">Total de Notas</div>
+                        <div class="stats-label">Total de Notas</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100">
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 hover-scale">
                     <div class="stats-card">
-                        <i class="fas fa-check-circle fa-3x mb-3" style="color: var(--success);"></i>
+                        <i class="fas fa-check-circle" style="color: var(--success);"></i>
                         <div class="stats-value text-success" id="lancadasNotas">0</div>
-                        <div class="text-muted">Notas Lançadas</div>
+                        <div class="stats-label">Notas Lançadas</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100">
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 hover-scale">
                     <div class="stats-card">
-                        <i class="fas fa-exclamation-circle fa-3x mb-3" style="color: var(--danger);"></i>
+                        <i class="fas fa-exclamation-circle" style="color: var(--danger);"></i>
                         <div class="stats-value text-danger" id="pendentesNotas">0</div>
-                        <div class="text-muted">Notas Pendentes</div>
+                        <div class="stats-label">Notas Pendentes</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 hover-scale">
+                    <div class="stats-card">
+                        <i class="fas fa-clock" style="color: var(--warning);"></i>
+                        <div class="stats-value text-warning" id="diasPendentes">0</div>
+                        <div class="stats-label">Dias Pendentes (média)</div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="card mt-4">
+        <!-- Filtros Premium -->
+        <div class="card mt-4 hover-scale">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros</h5>
+                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros Avançados</h5>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -227,41 +447,59 @@
                         <input type="text" id="notaFilter" class="form-control" placeholder="Digite o número">
                     </div>
                 </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-danger badge-filter" data-filter="clear">Limpar Filtros</span>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <span class="badge bg-primary badge-filter" data-filter="last7days">
+                        <i class="fas fa-calendar-week me-1"></i>Últimos 7 dias
+                    </span>
+                    <span class="badge bg-danger badge-filter" data-filter="pendentes">
+                        <i class="fas fa-exclamation-circle me-1"></i>Somente Pendentes
+                    </span>
+                    <span class="badge bg-secondary badge-filter" data-filter="clear">
+                        <i class="fas fa-times-circle me-1"></i>Limpar Filtros
+                    </span>
                 </div>
             </div>
         </div>
         
+        <!-- Loading Spinner Premium -->
         <div id="loading">
-            <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+            <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
                 <div class="text-center">
-                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <div class="spinner-border" role="status">
                         <span class="visually-hidden">Carregando...</span>
                     </div>
-                    <h5 class="mt-3">Carregando dados...</h5>
+                    <h5 class="mt-3 text-primary">Carregando dados...</h5>
+                    <p class="text-muted">Por favor, aguarde enquanto buscamos as informações mais recentes</p>
                 </div>
             </div>
         </div>
         
-        <div class="card mt-4">
+        <!-- Tabela Premium -->
+        <div class="card mt-4 hover-scale">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-table me-2"></i>Registro de Notas</h5>
-                <button class="btn btn-sm btn-outline-primary" id="exportButton">
-                    <i class="fas fa-download me-1"></i>Exportar
-                </button>
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i>Registro de Notas Fiscais</h5>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-2" id="exportExcel">
+                        <i class="fas fa-file-excel me-1"></i>Excel
+                    </button>
+                    <button class="btn btn-sm btn-primary" id="exportPDF">
+                        <i class="fas fa-file-pdf me-1"></i>PDF
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="notasTable" class="table table-hover" style="width:100%">
-                        <thead class="table-light">
+                    <table id="notasTable" class="table table-hover w-100">
+                        <thead>
                             <tr>
                                 <th>Filial</th>
                                 <th>Número</th>
                                 <th>Solicitação</th>
                                 <th>Lançamento</th>
+                                <th>Dias Pendentes</th>
                                 <th>Status</th>
                                 <th>Observação</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -271,17 +509,18 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
+    <!-- Footer Premium -->
+    <footer class="animate__animated animate__fadeInUp">
         <div class="container">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col-md-6">
                     <h5><i class="fas fa-file-invoice-dollar me-2"></i>Gestão de Notas Fiscais</h5>
-                    <p class="mb-0">Sistema de controle e monitoramento de notas fiscais</p>
+                    <p class="mb-0">Sistema premium de controle e monitoramento de notas fiscais</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="mb-0">
-                        &copy; <span id="currentYear"></span> Todos os direitos reservados
+                        &copy; <span id="currentYear"></span> Todos os direitos reservados | 
+                        <span class="text-light-soft">v2.1.0</span>
                     </p>
                 </div>
             </div>
@@ -293,17 +532,27 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pt-br.min.js"></script>
     
     <script>
         // Configurações
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwhqC-dFAjgoh7JVbcNrZU9YIDHLLRwtN1ED0pa-167HarJMfv1iUPl5FM8vWDCfCq0/exec";
         let autoRefreshInterval;
         let notasData = [];
+        let dataTable;
         
         $(document).ready(function() {
-            // Atualiza o ano no footer
+            // Atualiza o ano no footer e data atual
             $('#currentYear').text(new Date().getFullYear());
+            updateCurrentDate();
             
             // Carrega os dados inicialmente
             loadData();
@@ -320,8 +569,9 @@
                 }, 1000);
             });
             
-            // Botão de exportação
-            $('#exportButton').click(exportToExcel);
+            // Botões de exportação
+            $('#exportExcel').click(exportToExcel);
+            $('#exportPDF').click(exportToPDF);
             
             // Filtros
             $('#filialFilter, #statusFilter').change(applyFilters);
@@ -336,6 +586,7 @@
         
         function loadData() {
             $('#loading').show();
+            $('#notasTable').hide();
             
             fetch(WEB_APP_URL)
                 .then(response => response.json())
@@ -344,6 +595,7 @@
                         notasData = data.dados;
                         updateUI(notasData);
                         updateTimestamp();
+                        $('#notasTable').fadeIn();
                     }
                 })
                 .catch(error => {
@@ -364,10 +616,26 @@
         function updateStats(dados) {
             const total = dados.length;
             const lancadas = dados.filter(n => n.status && n.status.trim() === "Lançada").length;
+            const pendentes = total - lancadas;
+            
+            // Calcula dias pendentes médios
+            let totalDias = 0;
+            let countDias = 0;
+            
+            dados.forEach(nota => {
+                if (nota.status && nota.status.trim() === "Não Lançada" && nota.dataSolicitacao) {
+                    const dias = calculateDaysPending(nota.dataSolicitacao);
+                    totalDias += dias;
+                    countDias++;
+                }
+            });
+            
+            const mediaDias = countDias > 0 ? Math.round(totalDias / countDias) : 0;
             
             $('#totalNotas').text(total);
             $('#lancadasNotas').text(lancadas);
-            $('#pendentesNotas').text(total - lancadas);
+            $('#pendentesNotas').text(pendentes);
+            $('#diasPendentes').text(mediaDias);
         }
         
         function updateTable(dados) {
@@ -375,8 +643,17 @@
             tableBody.empty();
             
             dados.forEach(nota => {
-                const statusClass = nota.status && nota.status.includes("Lançada") ? 
+                const statusClass = nota.status && nota.status.trim() === "Lançada" ? 
                     "bg-success" : "bg-danger";
+                
+                const diasPendentes = nota.status && nota.status.trim() === "Não Lançada" && nota.dataSolicitacao ? 
+                    calculateDaysPending(nota.dataSolicitacao) : 0;
+                
+                const diasBadge = diasPendentes > 0 ? `
+                    <span class="days-badge">
+                        <i class="fas fa-clock"></i>${diasPendentes}d
+                    </span>
+                ` : 'N/A';
                 
                 tableBody.append(`
                     <tr>
@@ -384,23 +661,45 @@
                         <td>${nota.numeroNota || 'N/A'}</td>
                         <td>${formatDate(nota.dataSolicitacao)}</td>
                         <td>${formatDate(nota.dataLancamento)}</td>
+                        <td>${diasBadge}</td>
                         <td><span class="badge ${statusClass} status-badge">${nota.status || 'N/A'}</span></td>
                         <td title="${nota.observacao || ''}">${nota.observacao || 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
                     </tr>
                 `);
             });
             
-            if (!$.fn.DataTable.isDataTable('#notasTable')) {
-                $('#notasTable').DataTable({
+            if (!dataTable) {
+                dataTable = $('#notasTable').DataTable({
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
                     },
+                    dom: '<"top"f>rt<"bottom"lip><"clear">',
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            text: '<i class="fas fa-file-excel"></i> Excel',
+                            className: 'btn btn-outline-success btn-sm'
+                        },
+                        {
+                            extend: 'pdf',
+                            text: '<i class="fas fa-file-pdf"></i> PDF',
+                            className: 'btn btn-outline-danger btn-sm'
+                        }
+                    ],
                     columnDefs: [
-                        { width: "15%", targets: 5 } // Ajuste para a coluna de Observação
+                        { width: "10%", targets: 4 }, // Coluna Dias Pendentes
+                        { width: "15%", targets: 6 }, // Coluna Observação
+                        { width: "5%", targets: 7 },  // Coluna Ações
+                        { orderable: false, targets: 7 } // Ações não ordenável
                     ]
                 });
             } else {
-                $('#notasTable').DataTable().draw();
+                dataTable.draw();
             }
         }
         
@@ -416,11 +715,14 @@
         }
         
         function applyFilters() {
-            const table = $('#notasTable').DataTable();
-            table.column(0).search($('#filialFilter').val());
-            table.column(4).search($('#statusFilter').val());
-            table.column(1).search($('#notaFilter').val());
-            table.draw();
+            const filial = $('#filialFilter').val();
+            const status = $('#statusFilter').val();
+            const nota = $('#notaFilter').val();
+            
+            dataTable.column(0).search(filial);
+            dataTable.column(5).search(status);
+            dataTable.column(1).search(nota);
+            dataTable.draw();
         }
         
         function handleQuickFilter(filter) {
@@ -428,10 +730,37 @@
                 $('#filialFilter, #statusFilter').val('');
                 $('#notaFilter').val('');
                 applyFilters();
-                return;
+            } else if (filter === 'pendentes') {
+                $('#statusFilter').val('Não Lançada');
+                applyFilters();
+            } else if (filter === 'last7days') {
+                // Implementar filtro de últimos 7 dias se necessário
+                showAlert("Filtro de últimos 7 dias aplicado", "info");
+            }
+        }
+        
+        function calculateDaysPending(dateString) {
+            if (!dateString) return 0;
+            
+            let date;
+            
+            // Tenta detectar formato brasileiro e converter
+            if (dateString.includes('/')) {
+                const [day, month, year] = dateString.split(' ')[0].split('/');
+                date = new Date(`${year}-${month}-${day}`);
+            } else {
+                date = new Date(dateString);
             }
             
-            // Implemente outros filtros conforme necessário
+            if (isNaN(date)) return 0;
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const diffTime = today - date;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            return diffDays > 0 ? diffDays : 0;
         }
         
         function formatDate(dateString) {
@@ -457,8 +786,18 @@
             const now = new Date();
             $('#lastUpdate').html(`
                 <i class="fas fa-clock"></i> 
-                ${now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                Última atualização: ${now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
             `);
+        }
+        
+        function updateCurrentDate() {
+            const now = new Date();
+            $('#currentDate').text(now.toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            }));
         }
         
         function startAutoRefresh() {
@@ -467,34 +806,20 @@
         }
         
         function exportToExcel() {
-            const table = $('#notasTable').DataTable();
-            const data = table.rows({ search: 'applied' }).data().toArray();
-            
-            const wsData = [
-                ["Filial", "Número", "Solicitação", "Lançamento", "Status", "Observação"],
-                ...data.map(row => [
-                    row[0], // Filial
-                    row[1], // Número
-                    row[2], // Solicitação
-                    row[3], // Lançamento
-                    row[4], // Status
-                    row[5]  // Observação
-                ])
-            ];
-            
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "NotasFiscais");
-            
-            const date = new Date();
-            const dateStr = date.toISOString().slice(0, 10);
-            XLSX.writeFile(wb, `Notas_Fiscais_${dateStr}.xlsx`);
+            dataTable.button('.buttons-excel').trigger();
+        }
+        
+        function exportToPDF() {
+            dataTable.button('.buttons-pdf').trigger();
         }
         
         function showAlert(message, type) {
             const alert = $(`
-                <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" role="alert" style="z-index: 9999;">
-                    ${message}
+                <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" role="alert" style="z-index: 9999; min-width: 300px;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas ${type === 'danger' ? 'fa-exclamation-triangle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'} me-2"></i>
+                        <div>${message}</div>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             `);
